@@ -1,51 +1,59 @@
-#![allow(dead_code)]
+// const BIAS: i32 = 127;
+// const RADIX: f32 = 2.0;
 
-use std::fmt;
-use std::fmt::Display;
+// fn main(){
+//     let n: f32 = 42.42;
 
-#[derive(Debug, PartialEq)]
+//     let (signbit, exponent, fraction) = deconstruct_f32(n);
+//     let (sign, exponent, mantissa) = decode_f32_parts(signbit, exponent, fraction);
+//     let reconstituded_n = f32_from_parts(sign, exponent, mantissa);
 
-enum FileState{
-    Open,
-    Closed,
-}
+//     println!("{} -> [sign:{}, exponent:{}, mantissa: {:?}] -> {}", n, signbit, exponent, mantissa, reconstituded_n);
 
-#[derive(Debug)]
-struct File{
-    name: String,
-    data: Vec<u8>,
-    state: FileState,
-}
+// }
 
-impl Display for FileState{
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result{
-        match *self{
-            FileState::Open => write!(f, "OPEN"),
-            FileState::Closed => write!(f, "CLOSED"),
-        }
-    }
-}
+// fn deconstruct_f32(n:f32) -> (u32, u32, u32){
+//     let n_: u32 = unsafe{std::mem::transmute(n)};
 
-impl Display for File{
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result{
-        write!(f, "<{} ({})>", self.name, self.state)
-    }
-}
+//     let sign = (n_>>31)&1;
+//     let exponent =(n_>>23) & 0xff;
+//     let fraction = 0b00000000_01111111_11111111_11111111 & n_;
 
-impl File{
-    fn new(name: &str) -> File{
-        File{
-            name: String::from(name),
-            data: Vec::new(),
-            state: FileState::Closed,
-        }
-    }
-}
+//     (sign, exponent, fraction)
+// } 
+
+// fn decode_f32_parts(sign: u32, exponent: u32, fraction: u32) -> (f32, f32, f32){
+//     let signed_1 = (-1.0_f32).powf(sign as f32);
+
+//     let exponent = (exponent as i32) - BIAS;
+//     let exponent = RADIX.powf(exponent as f32);
+
+//     let mut mantissa: f32 = 1.0;
+
+//     for i in 0..23_u32{
+//         let one_at_bit_i = 1 << i;
+
+//         if(one_at_bit_i & fraction) != 0{
+//             mantissa += 2_f32.powf((i as f32) - 23.0);
+//         }
+//     }
+
+//     (signed_1, exponent, mantissa)
+
+// }
+
+// fn f32_from_parts(sign: f32, exponent: f32, mantissa: f32) -> f32{
+//     sign * exponent * mantissa
+// }
 
 fn main(){
-    let mut f1 = File::new("f1.txt");
-    f1.data = vec![100, 12, 45, 64];
+    let fraction: f32 = 44.42;
+    let n_: u32 = unsafe{std::mem::transmute(fraction)};
 
-    println!("{:?}", f1);
-    println!("{}", f1);
+
+    println!("{}", fraction);
+    println!("{}", (n_ >> 23));
+    println!("{}", (n_ >> 23) & 0xFF);
+    println!("{}",  2.0_f32.powf(5 as f32));
+
 }
